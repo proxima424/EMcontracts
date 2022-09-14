@@ -2,13 +2,13 @@
 pragma solidity ^0.8.13;
 
 library DecimalStrings {
-    function decimalString(
-        uint256 number,
-        uint8 decimals,
-        bool isPercent
-    ) internal pure returns (string memory) {
+    function decimalString(uint256 number, uint8 decimals, bool isPercent)
+        internal
+        pure
+        returns (string memory)
+    {
         uint8 percentBufferOffset = isPercent ? 1 : 0;
-        uint256 tenPowDecimals = 10**decimals;
+        uint256 tenPowDecimals = 10 ** decimals;
 
         uint256 temp = number;
         uint8 digits;
@@ -33,7 +33,7 @@ library DecimalStrings {
             params.bufferLength = params.sigfigIndex + percentBufferOffset;
         } else {
             // chop all trailing zeros for numbers with decimals
-            params.sigfigs = number / (10**(digits - numSigfigs));
+            params.sigfigs = number / (10 ** (digits - numSigfigs));
             if (tenPowDecimals > number) {
                 // number is less tahn one
                 // in this case, there may be leading zeros after the decimal place
@@ -60,7 +60,7 @@ library DecimalStrings {
     // from https://github.com/Uniswap/uniswap-v3-periphery/blob/main/contracts/libraries/NFTDescriptor.sol#L189-L231
 
     struct DecimalStringParams {
-        // significant figures of decimal
+    // significant figures of decimal
         uint256 sigfigs;
         // length of decimal string
         uint8 bufferLength;
@@ -85,11 +85,11 @@ library DecimalStrings {
     {
         bytes memory buffer = new bytes(params.bufferLength);
         if (params.isPercent) {
-            buffer[buffer.length - 1] = '%';
+            buffer[buffer.length - 1] = "%";
         }
         if (params.isLessThanOne) {
-            buffer[0] = '0';
-            buffer[1] = '.';
+            buffer[0] = "0";
+            buffer[1] = ".";
         }
 
         // add leading/trailing 0's
@@ -103,14 +103,12 @@ library DecimalStrings {
         // add sigfigs
         while (params.sigfigs > 0) {
             if (
-                params.decimalIndex > 0 &&
-                params.sigfigIndex == params.decimalIndex
+                params.decimalIndex > 0 && params.sigfigIndex == params.decimalIndex
             ) {
-                buffer[--params.sigfigIndex] = '.';
+                buffer[--params.sigfigIndex] = ".";
             }
-            buffer[--params.sigfigIndex] = bytes1(
-                uint8(uint256(48) + (params.sigfigs % 10))
-            );
+            buffer[--params.sigfigIndex] =
+                bytes1(uint8(uint256(48) + (params.sigfigs % 10)));
             params.sigfigs /= 10;
         }
         return string(buffer);
